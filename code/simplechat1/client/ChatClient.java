@@ -78,11 +78,15 @@ public class ChatClient extends AbstractClient
     }
   }
   
+    // override abstract class method
     protected void connectionClosed(){
         System.out.println("The server is closed");
     }
     
+    // override abstract class method
     protected void connectionException(Exception exception){
+        // this block of code will execute once there is an exception thrown (due to not receiving message from server)
+        // By calling the quiz method below, it stimulates the connectionClosed method above
         quit();
     }
     
