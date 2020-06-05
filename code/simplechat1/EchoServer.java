@@ -31,9 +31,14 @@ public class EchoServer extends AbstractServer
    *
    * @param port The port number to connect on.
    */
+
+
+  // ChatIF consoleUI;
+
   public EchoServer(int port) 
   {
     super(port);
+    // this.consoleUI = consoleUI;
   }
 
   
@@ -51,7 +56,12 @@ public class EchoServer extends AbstractServer
     System.out.println("Message received: " + msg + " from " + client);
     this.sendToAllClients(msg);
   }
-    
+  
+  // public void consoleInput(Object msg){
+
+  // }
+
+
   /**
    * This method overrides the one in the superclass.  Called
    * when the server starts listening for connections.
@@ -62,6 +72,9 @@ public class EchoServer extends AbstractServer
       ("Server listening for connections on port " + getPort());
   }
   
+
+
+
   /**
    * This method overrides the one in the superclass.  Called
    * when the server stops listening for connections.
@@ -71,6 +84,18 @@ public class EchoServer extends AbstractServer
     System.out.println
       ("Server has stopped listening for connections.");
   }
+
+  // Override abstract class method
+  protected void clientConnected(ConnectionToClient client){
+    System.out.println(client + " is connected!");
+  }
+
+  // Override abstract class method
+  synchronized protected void clientDisconnected(
+    ConnectionToClient client) {
+    System.out.println(client + " is clientDisconnected");
+  }
+
   
   //Class methods ***************************************************
   

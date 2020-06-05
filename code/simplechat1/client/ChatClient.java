@@ -68,7 +68,46 @@ public class ChatClient extends AbstractClient
   {
     try
     {
-      sendToServer(message);
+      if (message.startsWith("#quit")){
+          quit();
+
+      } else if (message.startsWith("#logoff")){
+          closeConnection();
+
+      } else if (message.startsWith("#sethost")){
+
+          if (!isConnected()){
+            String [] s = message.split(" ");
+            setHost(s[1].trim());
+          } 
+          else
+            System.out.println("You are still connected to the host, please disconnect before setting up a new host");
+
+      } else if (message.startsWith("#setport")){
+        if (!isConnected()){
+            String [] s = message.split(" ");
+            setPort(Integer.parseInt(s[1].trim()));
+          } 
+          else
+            System.out.println("You are still connected to the host, please disconnect before setting up a new port");
+        
+      } else if (message.startsWith("#login")){
+          if (!isConnected()){
+              openConnection();
+          }
+          else
+            System.out.println("You are still connected to the host, please disconnect before setting up new connection");
+
+      } else if (message.startsWith("#gethost")){
+          System.out.println("The current host name is: " + getHost());
+        
+      } else if (message.startsWith("#getport")){
+          System.out.println("The current host name is: " + getPort());
+      } else{// default
+        sendToServer(message);
+      }
+
+
     }
     catch(IOException e)
     {
@@ -80,7 +119,7 @@ public class ChatClient extends AbstractClient
   
     // override abstract class method
     protected void connectionClosed(){
-        System.out.println("The server is closed");
+        System.out.println("The connection is closed");
     }
     
     // override abstract class method
