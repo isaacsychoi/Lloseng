@@ -43,12 +43,12 @@ public class ClientConsole implements ChatIF
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ClientConsole(String host, int port) {
+  public ClientConsole(String host, int port, String loginID) {
 
 
     try 
     {
-      this.client = new ChatClient(host, port, this);
+      this.client = new ChatClient(host, port, this, loginID);
     } 
     catch(IOException exception) 
     {
@@ -109,13 +109,14 @@ public class ClientConsole implements ChatIF
 
     String host = "";
     int port = 0;  //The port number
+    String loginID = null;
 
-    // try{
-    //    loginID = Integer.parseInt(args[0]);
-    //  } catch(ArrayIndexOutOfBoundsException e){
-    //     System.out.println("Login ID is missing!");
-    //     System.exit(0); // quit the program
-    //  }
+    try{
+       loginID = args[0];
+     } catch(ArrayIndexOutOfBoundsException e){
+        System.out.println("Login ID is missing!");
+        System.exit(0); // quit the program
+     }
 
     try
     {
@@ -130,7 +131,7 @@ public class ClientConsole implements ChatIF
 
 
 
-    ClientConsole chat= new ClientConsole(host, port);
+    ClientConsole chat= new ClientConsole(host, port, loginID);
     chat.accept();  //Wait for console data
 
   }
