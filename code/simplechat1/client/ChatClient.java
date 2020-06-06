@@ -27,6 +27,7 @@ public class ChatClient extends AbstractClient
    */
   ChatIF clientUI; 
 
+
   
   //Constructors ****************************************************
   
@@ -44,6 +45,7 @@ public class ChatClient extends AbstractClient
     super(host, port); //Call the superclass constructor
     this.clientUI = clientUI;
     openConnection();
+
   }
 
   
@@ -81,7 +83,7 @@ public class ChatClient extends AbstractClient
             setHost(s[1].trim());
           } 
           else
-            System.out.println("You are still connected to the host, please disconnect before setting up a new host");
+            clientUI.display("You are still connected to the host, please disconnect before setting up a new host");
 
       } else if (message.startsWith("#setport")){
         if (!isConnected()){
@@ -89,20 +91,20 @@ public class ChatClient extends AbstractClient
             setPort(Integer.parseInt(s[1].trim()));
           } 
           else
-            System.out.println("You are still connected to the host, please disconnect before setting up a new port");
+            clientUI.display("You are still connected to the host, please disconnect before setting up a new port");
         
       } else if (message.startsWith("#login")){
           if (!isConnected()){
               openConnection();
           }
           else
-            System.out.println("You are still connected to the host, please disconnect before setting up new connection");
+            clientUI.display("You are still connected to the host, please disconnect before setting up new connection");
 
       } else if (message.startsWith("#gethost")){
-          System.out.println("The current host name is: " + getHost());
+          clientUI.display("The current host name is: " + getHost());
         
       } else if (message.startsWith("#getport")){
-          System.out.println("The current host name is: " + getPort());
+          clientUI.display("The current port number is: " + getPort());
       } else{// default
         sendToServer(message);
       }

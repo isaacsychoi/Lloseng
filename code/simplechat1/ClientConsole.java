@@ -16,6 +16,7 @@ import common.*;
  * @author Dr Robert Lagani&egrave;re
  * @version July 2000
  */
+
 public class ClientConsole implements ChatIF 
 {
   //Class variables *************************************************
@@ -32,6 +33,7 @@ public class ClientConsole implements ChatIF
    */
   ChatClient client;
 
+
   
   //Constructors ****************************************************
 
@@ -41,11 +43,12 @@ public class ClientConsole implements ChatIF
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ClientConsole(String host, int port) 
-  {
+  public ClientConsole(String host, int port) {
+
+
     try 
     {
-      client= new ChatClient(host, port, this);
+      this.client = new ChatClient(host, port, this);
     } 
     catch(IOException exception) 
     {
@@ -102,10 +105,17 @@ public class ClientConsole implements ChatIF
    *
    * @param args[0] The host to connect to.
    */
-  public static void main(String[] args) 
-  {
+  public static void main(String[] args) {
+
     String host = "";
     int port = 0;  //The port number
+
+    // try{
+    //    loginID = Integer.parseInt(args[0]);
+    //  } catch(ArrayIndexOutOfBoundsException e){
+    //     System.out.println("Login ID is missing!");
+    //     System.exit(0); // quit the program
+    //  }
 
     try
     {
@@ -117,8 +127,12 @@ public class ClientConsole implements ChatIF
       host = "localhost";
       port = DEFAULT_PORT;
     }
+
+
+
     ClientConsole chat= new ClientConsole(host, port);
     chat.accept();  //Wait for console data
+
   }
 }
 //End of ConsoleChat class

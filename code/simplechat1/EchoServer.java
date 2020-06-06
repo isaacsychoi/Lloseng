@@ -4,6 +4,7 @@
 
 import java.io.*;
 import ocsf.server.*;
+import common.*;
 
 /**
  * This class overrides some of the methods in the abstract 
@@ -33,14 +34,17 @@ public class EchoServer extends AbstractServer
    */
 
 
-  // ChatIF consoleUI;
+  ChatIF consoleUI;
 
-  public EchoServer(int port) 
-  {
-    super(port);
-    // this.consoleUI = consoleUI;
+  public EchoServer(int port){
+      super(port);
   }
 
+
+  public EchoServer(int port, ChatIF consoleUI){
+      super(port);
+      this.consoleUI = consoleUI;
+  }
   
   //Instance methods ************************************************
   
@@ -57,9 +61,39 @@ public class EchoServer extends AbstractServer
     this.sendToAllClients(msg);
   }
   
-  // public void consoleInput(Object msg){
+  public void handleMessageFromServerUI(String msg){
 
-  // }
+    try{
+        if (msg.startsWith("#quit")){
+          close();
+          System.exit(0);
+      } else if (msg.startsWith("#stop")){
+          stopListening();
+      }else if (msg.startsWith("#close")){
+          close();
+      }else if (msg.startsWith("#setport")){
+          if (!isListening()){
+            String [] s = msg.split(" ");
+            setPort(Integer.parseInt(s[1].trim()));
+          }
+      }else if (msg.startsWith("#start")){
+          if(!isListening()){
+            listen();
+          }
+      }else if (msg.startsWith("#getport")){
+          this.consoleUI.display("The current port number is: " + getPort());
+
+      }else{
+        this.consoleUI.display(msg);
+        sendToAllClients("SERVER MSG> " + msg);
+      }
+    } catch (IOException e){
+      this.consoleUI.display
+        ("Could not send message to server.  Terminating console.");
+        System.exit(0);
+    }
+  }
+    
 
 
   /**
