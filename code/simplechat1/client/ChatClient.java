@@ -45,8 +45,10 @@ public class ChatClient extends AbstractClient
     super(host, port); //Call the superclass constructor
     this.clientUI = clientUI;
     this.loginID = loginID;
-    openConnection();
+
+    openConnection(); 
     sendToServer("#login "+loginID);
+    System.out.println(loginID + " has logged on.");
   }
 
   
@@ -72,9 +74,11 @@ public class ChatClient extends AbstractClient
     try
     {
       if (message.startsWith("#quit")){
+          sendToServer("disconnected");
           quit();
 
       } else if (message.startsWith("#logoff")){
+          sendToServer("disconnected");
           closeConnection();
 
       } else if (message.startsWith("#sethost")){
@@ -94,7 +98,7 @@ public class ChatClient extends AbstractClient
           else
             clientUI.display("You are still connected to the host, please disconnect before setting up a new port");
         
-      } else if (message.startsWith("#login")){
+      } else if (message.equals("#login")){
           if (!isConnected()){
               openConnection();
           }

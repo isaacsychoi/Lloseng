@@ -31,8 +31,7 @@ public class ServerConsole implements ChatIF{
 
 	      while (true){
 	        message = fromConsole.readLine();
-		    this.server.handleMessageFromServerUI(message);
-		    
+	        this.server.handleMessageFromServerUI(message);
 	      }// while-loop
 	    } 
 	    catch (Exception ex) 
@@ -53,7 +52,7 @@ public class ServerConsole implements ChatIF{
 
 	    try
 	    {
-	      port = Integer.parseInt(args[0]); //Get port from command line
+	      port = Integer.parseInt(args[0].trim()); //Get port from command line
 	    }
 	    catch(Throwable t)
 	    {

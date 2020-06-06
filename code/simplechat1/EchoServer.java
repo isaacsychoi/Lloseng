@@ -56,16 +56,37 @@ public class EchoServer extends AbstractServer
    */
   public void handleMessageFromClient (Object msg, ConnectionToClient client){
     
-    String x = (String) msg;
-    if (x.startsWith("#login")){
-      
-      String[] s = x.split(" ");
+    try{
+      String x = (String) msg;
 
-      System.out.println("Login from " + s[1]);
-    } else{
-      System.out.println("Message received: " + msg + " from " + client);
-      this.sendToAllClients(msg);
-    }
+      if (x.equals("disconnected") && client.getInfo("loginID") != null){
+          System.out.println(client.getInfo("loginID") + " has disconnected!");
+          this.sendToAllClients(client.getInfo("loginID") + " has disconnected!");
+          return;
+      }
+      System.out.println("Message received: \"" + msg.toString() + "\" from " + client.getInfo("loginID"));
+      if (x.startsWith("#login")){
+      
+          if (client.getInfo("loginID") != null){
+              client.sendToClient("login ID is already set");
+            } else {
+      
+            String[] s = x.split(" ");
+            client.setInfo("loginID", s[1].trim());
+            System.out.println(s[1].trim() + " has logged on.");
+
+          }   
+      
+      } else if (client.getInfo("loginID") == null){
+      
+          client.sendToClient("login ID is not received");
+          client.close();
+      
+      }  else{
+        // System.out.println((String)client.getInfo("loginID") + " > " + msg);
+          this.sendToAllClients(client.getInfo("loginID") + "> " + msg.toString());
+      }
+    } catch (IOException e){}
 
     
   }
@@ -130,14 +151,16 @@ public class EchoServer extends AbstractServer
 
   // Override abstract class method
   protected void clientConnected(ConnectionToClient client){
-    System.out.println(client + " is connected!");
+    // System.out.println(client.getInfo("loginID") + " is connected!");
+    System.out.println("A new client is attempting to connect to the server.");
   }
 
   // Override abstract class method
   synchronized protected void clientDisconnected(
     ConnectionToClient client) {
-    System.out.println(client + " is clientDisconnected");
+    System.out.println(client.getInfo("loginID") + " is disconnected");
   }
+
 
   
   //Class methods ***************************************************
