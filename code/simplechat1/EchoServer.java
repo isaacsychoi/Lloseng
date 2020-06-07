@@ -4,6 +4,7 @@
 
 import java.io.*;
 import ocsf.server.*;
+import common.*;
 
 /**
  * This class overrides some of the methods in the abstract 
@@ -31,11 +32,19 @@ public class EchoServer extends AbstractServer
    *
    * @param port The port number to connect on.
    */
-  public EchoServer(int port) 
-  {
-    super(port);
+
+
+  ChatIF consoleUI;
+
+  public EchoServer(int port){
+      super(port);
   }
 
+
+  public EchoServer(int port, ChatIF consoleUI){
+      super(port);
+      this.consoleUI = consoleUI;
+  }
   
   //Instance methods ************************************************
   
@@ -45,13 +54,78 @@ public class EchoServer extends AbstractServer
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
-  public void handleMessageFromClient
-    (Object msg, ConnectionToClient client)
-  {
-    System.out.println("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
+  public void handleMessageFromClient (Object msg, ConnectionToClient client){
+    
+    try{
+      String x = (String) msg;
+
+      if (x.equals("disconnected") && client.getInfo("loginID") != null){
+          System.out.println(client.getInfo("loginID") + " has disconnected!");
+          this.sendToAllClients(client.getInfo("loginID") + " has disconnected!");
+          return;
+      }
+      System.out.println("Message received: \"" + msg.toString() + "\" from " + client.getInfo("loginID"));
+      if (x.startsWith("#login")){
+      
+          if (client.getInfo("loginID") != null){
+              client.sendToClient("login ID is already set");
+            } else {
+      
+            String[] s = x.split(" ");
+            client.setInfo("loginID", s[1].trim());
+            System.out.println(s[1].trim() + " has logged on.");
+
+          }   
+      
+      } else if (client.getInfo("loginID") == null){
+      
+          client.sendToClient("login ID is not received");
+          client.close();
+      
+      }  else{
+        // System.out.println((String)client.getInfo("loginID") + " > " + msg);
+          this.sendToAllClients(client.getInfo("loginID") + "> " + msg.toString());
+      }
+    } catch (IOException e){}
+
+    
+  }
+  
+  public void handleMessageFromServerUI(String msg){
+
+    try{
+        if (msg.startsWith("#quit")){
+          close();
+          System.exit(0);
+      } else if (msg.startsWith("#stop")){
+          stopListening();
+      }else if (msg.startsWith("#close")){
+          close();
+      }else if (msg.startsWith("#setport")){
+          if (!isListening()){
+            String [] s = msg.split(" ");
+            setPort(Integer.parseInt(s[1].trim()));
+          }
+      }else if (msg.startsWith("#start")){
+          if(!isListening()){
+            listen();
+          }
+      }else if (msg.startsWith("#getport")){
+          this.consoleUI.display("The current port number is: " + getPort());
+
+      }else{
+        this.consoleUI.display(msg);
+        sendToAllClients("SERVER MSG> " + msg);
+      }
+    } catch (IOException e){
+      this.consoleUI.display
+        ("Could not send message to server.  Terminating console.");
+        System.exit(0);
+    }
   }
     
+
+
   /**
    * This method overrides the one in the superclass.  Called
    * when the server starts listening for connections.
@@ -62,6 +136,9 @@ public class EchoServer extends AbstractServer
       ("Server listening for connections on port " + getPort());
   }
   
+
+
+
   /**
    * This method overrides the one in the superclass.  Called
    * when the server stops listening for connections.
@@ -71,6 +148,20 @@ public class EchoServer extends AbstractServer
     System.out.println
       ("Server has stopped listening for connections.");
   }
+
+  // Override abstract class method
+  protected void clientConnected(ConnectionToClient client){
+    // System.out.println(client.getInfo("loginID") + " is connected!");
+    System.out.println("A new client is attempting to connect to the server.");
+  }
+
+  // Override abstract class method
+  synchronized protected void clientDisconnected(
+    ConnectionToClient client) {
+    System.out.println(client.getInfo("loginID") + " is disconnected");
+  }
+
+
   
   //Class methods ***************************************************
   

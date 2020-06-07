@@ -16,6 +16,7 @@ import common.*;
  * @author Dr Robert Lagani&egrave;re
  * @version July 2000
  */
+
 public class ClientConsole implements ChatIF 
 {
   //Class variables *************************************************
@@ -32,6 +33,7 @@ public class ClientConsole implements ChatIF
    */
   ChatClient client;
 
+
   
   //Constructors ****************************************************
 
@@ -41,16 +43,18 @@ public class ClientConsole implements ChatIF
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ClientConsole(String host, int port) 
-  {
+  public ClientConsole(String host, int port, String loginID) {
+
+
     try 
     {
-      client= new ChatClient(host, port, this);
+      this.client = new ChatClient(host, port, this, loginID);
     } 
     catch(IOException exception) 
     {
       System.out.println("Error: Can't setup connection!"
                 + " Terminating client.");
+
       System.exit(1);
     }
   }
@@ -91,7 +95,7 @@ public class ClientConsole implements ChatIF
    */
   public void display(String message) 
   {
-    System.out.println("> " + message);
+    System.out.println(message);
   }
 
   
@@ -102,21 +106,35 @@ public class ClientConsole implements ChatIF
    *
    * @param args[0] The host to connect to.
    */
-  public static void main(String[] args) 
-  {
+  public static void main(String[] args) {
+
     String host = "";
     int port = 0;  //The port number
+    String loginID = null;
+
+    try{
+       loginID = args[0].trim();
+     } catch(ArrayIndexOutOfBoundsException e){
+        System.out.println("Login ID is missing!");
+        System.exit(0); // quit the program
+     }
 
     try
     {
-      host = args[0];
+      host = args[1].trim();
+      port = Integer.parseInt(args[2].trim());
     }
     catch(ArrayIndexOutOfBoundsException e)
     {
       host = "localhost";
+      port = DEFAULT_PORT;
     }
-    ClientConsole chat= new ClientConsole(host, DEFAULT_PORT);
+
+
+
+    ClientConsole chat= new ClientConsole(host, port, loginID);
     chat.accept();  //Wait for console data
+
   }
 }
 //End of ConsoleChat class
